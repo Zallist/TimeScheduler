@@ -1,0 +1,63 @@
+body {
+  font-family: 'Segoe UI', 'Droid Sans', Arial, sans-serif;
+  font-size: 11px; }
+
+.time-sch-item-event {
+  border-width: 1px;
+  border-style: solid;
+  width: 2px; }
+
+.item-event-none {
+  background-color: green;
+  border-color: #004d00; }
+
+.item-event-one {
+  background-color: #ff2222;
+  border-color: #ee0000; }
+
+.item-event-two {
+  background-color: blue;
+  border-color: #3333ff; }
+
+.item-event-three {
+  background-color: orange;
+  border-color: #cc8400; }
+
+.item-status-none {
+  background-color: green; }
+
+.item-status-one {
+  background-color: #ff2222; }
+
+.item-status-two {
+  background-color: blue; }
+
+.item-status-three {
+  background-color: orange; }
+
+.time-sch-item {
+  transition: background-color ease 0.1s;
+  border-width: 1px;
+  border-style: solid; }
+  .time-sch-item.item-status-none {
+    border-color: #006700; }
+    .time-sch-item.item-status-none:hover {
+      background-color: #00b300; }
+  .time-sch-item.item-status-one {
+    border-color: #ff0808; }
+    .time-sch-item.item-status-one:hover {
+      background-color: #ff5555; }
+  .time-sch-item.item-status-two {
+    border-color: #0000e6; }
+    .time-sch-item.item-status-two:hover {
+      background-color: #3333ff; }
+  .time-sch-item.item-status-three {
+    border-color: #e69500; }
+    .time-sch-item.item-status-three:hover {
+      background-color: #ffb733; }
+  .time-sch-item.ui-draggable-dragging {
+    cursor: move; }
+
+.realtime-info {
+  display: none; }
+

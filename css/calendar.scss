@@ -1,0 +1,86 @@
+//== Variables
+$statusNone: green;
+$statusOne: #FF2222;
+$statusTwo: blue;
+$statusThree: orange;
+
+//== Styling
+body {
+	font-family: 'Segoe UI', 'Droid Sans', Arial, sans-serif;
+	font-size: 11px;
+	}
+	
+.time-sch-item-event {
+	border-width: 1px;
+	border-style: solid;
+	width: 2px;
+	}  
+.item-event-none {
+    background-color: $statusNone;
+    border-color: darken($statusNone, 10%);
+	}
+.item-event-one {
+    background-color: $statusOne;
+    border-color: darken($statusOne, 10%);
+	}
+.item-event-two {
+    background-color: $statusTwo;
+    border-color: lighten($statusTwo, 10%);
+	}
+.item-event-three {
+    background-color: $statusThree;
+    border-color: darken($statusThree, 10%);
+	}
+
+.item-status-none {
+    background-color: $statusNone;
+	}
+.item-status-one {
+    background-color: $statusOne;
+	}
+.item-status-two {
+    background-color: $statusTwo;
+	}
+.item-status-three {
+    background-color: $statusThree;
+	}
+
+.time-sch-item {
+	transition: background-color ease 0.1s;
+
+	border-width: 1px;
+	border-style: solid;
+
+	&.item-status-none {
+		border-color: darken($statusNone, 5%);
+		&:hover { 
+			background-color: lighten($statusNone, 10%); 
+			}
+		}
+	&.item-status-one {
+		border-color: darken($statusOne, 5%);
+		&:hover { 
+			background-color: lighten($statusOne, 10%); 
+			}
+		}
+	&.item-status-two {
+		border-color: darken($statusTwo, 5%);
+		&:hover { 
+			background-color: lighten($statusTwo, 10%); 
+			}
+		}
+	&.item-status-three {
+		border-color: darken($statusThree, 5%);
+		&:hover { 
+			background-color: lighten($statusThree, 10%); 
+			}
+		}
+
+	&.ui-draggable-dragging {
+		cursor: move;
+		}
+	}
+
+.realtime-info {
+	display: none;
+}

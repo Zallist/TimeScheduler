@@ -1,0 +1,88 @@
+//== Related 
+.time-sch-header-wrapper {
+	padding: .5em;
+	margin-bottom: .5em;
+	}
+.time-sch-title {
+	text-align: center;
+	font-size: 1.25em;
+	}
+	
+.time-sch-item {
+	background-color: #2299DD;
+	color: white;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.time-sch-item-content {
+	padding: 4px 0 4px 6px;
+	}
+
+.time-sch-date-header {
+    padding: 2px;
+    }
+.time-sch-times:first-child .time-sch-date-header {
+	font-weight: bold;
+	text-align: center;
+	}
+
+.time-sch-current-time {
+	border-left-style: dotted;
+	border-left-width: 2px;
+	border-left-color: #ff7f6e;
+	}
+
+//== Related to the header buttons
+.time-sch-button {
+	border: 1px solid #E1E1E1;
+	font-weight: bold;
+	padding: .25em;
+
+	text-decoration: none;
+	color: #222222;
+
+	height: 20px;
+	line-height: 20px;
+
+	padding-left: .5em;
+	padding-right: .5em;
+
+	&.time-sch-selected-button {
+		cursor: default;
+		background-color: #EEEEEE;
+		}
+
+	&.time-sch-period-button {
+		&:first-child {
+			border-top-left-radius: 4px;
+			border-bottom-left-radius: 4px;
+			}
+		&:last-child {
+			border-top-right-radius: 4px;
+			border-bottom-right-radius: 4px;
+			}
+		}
+
+	&.time-sch-time-button {
+		background-repeat: no-repeat;
+		background-position: center center;
+	
+		min-width: 20px;
+		}
+
+	&.time-sch-time-button-next {
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+
+		background-image: url(images/arrow_right.png);
+		}
+	&.time-sch-time-button-prev {
+		border-top-left-radius: 4px;
+		border-bottom-left-radius: 4px;
+
+		background-image: url(images/arrow_left.png);
+		}
+	&.time-sch-time-button-goto, &.time-sch-time-button-today {
+		border-radius: 4px;
+		}
+	}

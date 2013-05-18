@@ -1,0 +1,5 @@
+Biggy
+A section should be able to contain sections
+"Ghost Zone" of item start and end should be shown when dragging
+Make printable version
+	TimeScheduler.PrintVersion()

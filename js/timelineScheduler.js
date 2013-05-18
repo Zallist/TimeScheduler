@@ -18,7 +18,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
-/*! Project location: https://sourceforge.net/p/timeschedule */
+/*! Project location: https://github.com/Zallist/TimeScheduler */
 
 // Visual Studio references
 

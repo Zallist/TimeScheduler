@@ -32,8 +32,7 @@ var TimeScheduler = {
            Sections are cached. To clear cache, use TimelineScheduler.FillSections(true);
            Callback accepts an array of sections in the format {
             id: num,
-            name: string,
-            obj: objToBeStoredInData
+            name: string
            }
         */
         GetSections: function (callback) { },

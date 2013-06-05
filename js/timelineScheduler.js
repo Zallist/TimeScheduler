@@ -178,7 +178,13 @@ var TimeScheduler = {
     HeaderWrap: null,
 
     TableWrap: null,
+
+    HeaderTable: null,
+
+    ContentWrap: null,
+    GridTable: null,
     SectionWrap: null,
+
     Table: null,
     Sections: {},
 

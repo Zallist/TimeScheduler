@@ -129,6 +129,8 @@ var Calendar = {
         TimeScheduler.Options.Text.NextButton = '&nbsp;';
         TimeScheduler.Options.Text.PrevButton = '&nbsp;';
 
+        TimeScheduler.Options.MaxHeight = 100;
+
         TimeScheduler.Init();
     },
 

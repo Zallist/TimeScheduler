@@ -149,7 +149,16 @@ var TimeScheduler = {
             // Called when any item move event starts (draggable.start, resizable.start)
             ItemMovementStart: null,
             // Called when any item move event ends (draggable.end, resizable.end)
-            ItemMovementEnd: null
+            ItemMovementEnd: null,
+
+            // function (eventData, itemData)
+            ItemEventClick: null,
+
+            // function (eventData, itemData)
+            ItemEventMouseEnter: null,
+
+            // function (eventData, itemData)
+            ItemEventMouseLeave: null
         },
 
         // Should dragging be enabled?
@@ -159,7 +168,10 @@ var TimeScheduler = {
         AllowResizing: false,
 
         // Disable items on moving?
-        DisableOnMove: true
+        DisableOnMove: true,
+
+        // A given max height for the calendar, if unspecified, will expand forever
+        MaxHeight: null
     },
 
     Wrapper: null,
@@ -231,6 +243,7 @@ var TimeScheduler = {
             header = period.TimeframeHeaders[headerCount];
 
             tr = $('<tr class="time-sch-times"></tr>')
+                .addClass('time-sch-times-header-' + headerCount)
                 .appendTo(thead);
 
             td = $('<td class="time-sch-section-header"></td>')
@@ -282,6 +295,8 @@ var TimeScheduler = {
         for (var i = 0; i < sections.length; i++) {
             tr = $('<tr class="time-sch-section-row"></tr>')
                 .css('height', TimeScheduler.Options.MinRowHeight);
+
+            tr.addClass(i % 2 === 0 ? 'time-sch-section-even' : 'time-sch-section-odd');
 
             td = $('<td class="time-sch-section"></td>')
                 .text(sections[i].name)
@@ -412,9 +427,10 @@ var TimeScheduler = {
 
                             eventDiff = (event.at.diff(foundStart, 'minutes') / itemSelfDiff) * 100;
                             
-                            eventElem = $('<div class="time-sch-item-event"></div>');
-                            eventElem.attr('title', event.at.format(TimeScheduler.Options.LowerFormat) + ' - ' + event.label);
-                            eventElem.css('left', eventDiff + '%');
+                            eventElem = $('<div class="time-sch-item-event"></div>')
+                                .attr('title', event.at.format(TimeScheduler.Options.LowerFormat) + ' - ' + event.label)
+                                .css('left', eventDiff + '%')
+                                .data('event', event);
 
                             if (event.classes) {
                                 eventElem.addClass(event.classes);
@@ -575,7 +591,7 @@ var TimeScheduler = {
                         TimeScheduler.Options.Events.ItemMovementEnd.call(this);
                     }
                 },
-                cancel: '.time-sch-item-end, .time-sch-item-start'
+                cancel: '.time-sch-item-end, .time-sch-item-start, .time-sch-item-event'
             });
 
             $('.time-sch-section-container').droppable({
@@ -715,6 +731,33 @@ var TimeScheduler = {
                     }
                 });
             }
+        }
+
+        if (TimeScheduler.Options.Events.ItemEventClicked) {
+            itemElem.find('.time-sch-item-event').click(function (event) {
+                event.preventDefault();
+
+                var itemElem = $(this).closest('.time-sch-item');
+
+                event.preventDefault();
+                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+            });
+        }
+        if (TimeScheduler.Options.Events.ItemEventMouseEnter) {
+            itemElem.find('.time-sch-item-event').mouseenter(function (event) {
+                var itemElem = $(this).closest('.time-sch-item');
+
+                event.preventDefault();
+                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+            });
+        }
+        if (TimeScheduler.Options.Events.ItemEventMouseLeave) {
+            itemElem.find('.time-sch-item-event').mouseleave(function (event) {
+                var itemElem = $(this).closest('.time-sch-item');
+
+                event.preventDefault();
+                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+            });
         }
     },
 

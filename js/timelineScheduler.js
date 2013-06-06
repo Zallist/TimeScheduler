@@ -243,6 +243,10 @@ var TimeScheduler = {
         thead = $('<thead></thead>');
         tbody = $('<tbody></tbody>');
 
+        if (period.Classes) {
+            TimeScheduler.TableWrap.toggleClass(period.Classes, true);
+        }
+
         for (var headerCount = 0; headerCount < period.TimeframeHeaders.length; headerCount++) {
             prevDate = null;
             colspan = 0;

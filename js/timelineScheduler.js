@@ -287,18 +287,18 @@ var TimeScheduler = {
     },
 
     CreateSections: function (sections) {
-        var timeCount, tr, td, sectionContainer, headers;
+        var timeCount, tr, td, sectionContainer, headers, i;
 
         timeCount = 1;
         headers = $.makeArray(TimeScheduler.Table.find('thead tr'));
 
-        for (var i = 0; i < headers.length; i++) {
+        for (i = 0; i < headers.length; i++) {
             if (timeCount < $(headers[i]).find('.time-sch-date-header').length) {
                 timeCount = $(headers[i]).find('.time-sch-date-header').length;
             }
         }
 
-        for (var i = 0; i < sections.length; i++) {
+        for (i = 0; i < sections.length; i++) {
             tr = $('<tr class="time-sch-section-row"></tr>')
                 .css('height', TimeScheduler.Options.MinRowHeight);
 
@@ -368,14 +368,14 @@ var TimeScheduler = {
         var item, event, section, itemElem, eventElem, itemContent, itemName, itemIcon;
         var minuteDiff, splits, itemDiff, itemSelfDiff, eventDiff, calcTop, calcLeft, calcWidth, foundStart, foundEnd;
         var inSection = {}, foundPos, elem, prevElem, needsNewRow;
-        var period, end;
+        var period, end, i;
 
         period = TimeScheduler.GetSelectedPeriod();
         end = TimeScheduler.GetEndOfPeriod(TimeScheduler.Options.Start, period);
 
         minuteDiff = Math.abs(TimeScheduler.Options.Start.diff(end, 'minutes'));
 
-        for (var i = 0; i < items.length; i++) {
+        for (i = 0; i < items.length; i++) {
             item = items[i];
             section = TimeScheduler.Sections[item.sectionID];
 
@@ -482,15 +482,14 @@ var TimeScheduler = {
         for (var prop in inSection) {
             section = TimeScheduler.Sections[prop];
 
-            for (var i = 0; i < inSection[prop].length; i++) {
+            for (i = 0; i < inSection[prop].length; i++) {
+                var elemTop, elemBottom;
                 elem = inSection[prop][i];
 
                 // If we're passed the first item in the row
                 for (var prev = 0; prev < i; prev++) {
-                    prevElem = inSection[prop][prev];
-
-                    var elemTop, elemBottom;
                     var prevElemTop, prevElemBottom;
+                    prevElem = inSection[prop][prev];
                         
                     prevElemTop = prevElem.Element.position().top;
                     prevElemBottom = prevElemTop + prevElem.Element.outerHeight();

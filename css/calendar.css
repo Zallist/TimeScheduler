@@ -61,3 +61,12 @@ body {
 .realtime-info {
   display: none; }
 
+.period-3day .time-sch-header-0-date-even {
+  background-color: #F0F0F0; }
+
+.period-1week .time-sch-header-0-date-even {
+  background-color: #F0F0F0; }
+
+.period-1month .time-sch-header-1-date-even {
+  background-color: #F0F0F0; }
+

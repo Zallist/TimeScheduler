@@ -83,7 +83,8 @@ var TimeScheduler = {
                 TimeframeHeaders: [
                     'Do MMM',
                     'HH'
-                ]
+                ],
+                Classes: 'time-sch-period-2day'
             },
             {
                 Name: '2 weeks',
@@ -93,7 +94,8 @@ var TimeScheduler = {
                 TimeframeHeaders: [
                     'MMM',
                     'Do'
-                ]
+                ],
+                Classes: 'time-sch-period-2week'
             }
         ],
 
@@ -288,10 +290,57 @@ var TimeScheduler = {
         return moment(start).tsAdd('minutes', period.TimeframeOverall);
     },
 
+    AddHeaderClasses: function (td, columnCount, specificHeader) {
+        var trs, trArray, tr;
+        var tdArray, foundTD;
+        var prevIndex, nextIndex, colspan;
+        var complete, isEven;
+        
+        trs = TimeScheduler.TableHeader.find('tr');
+
+        if (specificHeader !== undefined) {
+            trs = $(trs.get(specificHeader));
+        }
+
+        if (trs.length && trs.length > 0) {
+            trArray = $.makeArray(trs);
+
+            for (var trCount = 0; trCount < trArray.length; trCount++) {
+                complete = false;
+                nextIndex = 0;
+                tr = $(trArray[trCount]);
+                tdArray = $.makeArray(tr.find('.time-sch-date-header'));
+
+                for (var tdCount = 0; tdCount < tdArray.length && !complete; tdCount++) {
+                    foundTD = $(tdArray[tdCount]);
+
+                    colspan = Number(foundTD.attr('colspan'));
+                    if (colspan && !isNaN(colspan) && colspan > 0) {
+                        prevIndex = (nextIndex ? nextIndex : 0);
+                        nextIndex = prevIndex + colspan;
+                    }
+                    else {
+                        prevIndex = (nextIndex ? nextIndex : 0);
+                        nextIndex = prevIndex + 1;
+                    }
+
+                    if (prevIndex <= columnCount && columnCount < nextIndex) {
+                        complete = true;
+                        isEven = tdCount % 2 === 0;
+
+                        td.addClass('time-sch-header-' + trCount + '-date-column-' + tdCount)
+                            .addClass('time-sch-header-' + trCount + '-date-' + (isEven ? 'even' : 'odd'));
+                    }
+                }
+            }
+        }
+    },
+
     CreateCalendar: function () {
         var tr, td, thisTime, header;
         var minuteDiff, splits, period, end;
         var prevDate = null, colspan = 0;
+        var currentTimeIndex;
 
         period = TimeScheduler.GetSelectedPeriod();
         end = TimeScheduler.GetEndOfPeriod(TimeScheduler.Options.Start, period);
@@ -325,7 +374,10 @@ var TimeScheduler = {
 
         for (var headerCount = 0; headerCount < period.TimeframeHeaders.length; headerCount++) {
             prevDate = null;
+            isEven = true;
             colspan = 0;
+            currentTimeIndex = 0;
+
             header = period.TimeframeHeaders[headerCount];
 
             tr = $(document.createElement('tr'))
@@ -351,9 +403,21 @@ var TimeScheduler = {
                     prevDate = thisTime;
 
                     td = $(document.createElement('td'))
+                        .data('header-row', headerCount)
+                        .data('column-count', i)
+                        .data('column-is-even', isEven)
                         .addClass('time-sch-date time-sch-date-header')
                         .append(thisTime)
                         .appendTo(tr);
+                    
+                    td.addClass('time-sch-header-' + headerCount + '-date-column-' + currentTimeIndex)
+                        .addClass('time-sch-header-' + headerCount + '-date-' + ((currentTimeIndex % 2 === 0) ? 'even' : 'odd'));
+
+                    for (var prevHeader = 0; prevHeader < headerCount; prevHeader++) {
+                        TimeScheduler.AddHeaderClasses(td, i, prevHeader);
+                    }
+
+                    currentTimeIndex += 1;
                 }
 
                 colspan += 1;
@@ -400,6 +464,8 @@ var TimeScheduler = {
                 td = $(document.createElement('td'))
                     .addClass('time-sch-date time-sch-date-content')
                     .appendTo(tr);
+
+                TimeScheduler.AddHeaderClasses(td, time);
             }
 
             TimeScheduler.Sections[sections[i].id] = {
@@ -409,8 +475,7 @@ var TimeScheduler = {
         }
 
         TimeScheduler.SectionWrap.css({
-            /*top: TimeScheduler.Table.find('thead').height(),
-            */left: TimeScheduler.Options.Element.find('.time-sch-section').outerWidth()
+            left: TimeScheduler.Options.Element.find('.time-sch-section').outerWidth()
         });
 
         if (TimeScheduler.Options.ShowCurrentTime) {
@@ -701,7 +766,12 @@ var TimeScheduler = {
                     });
 
                     if (TimeScheduler.Options.DisableOnMove) {
-                        ui.draggable.draggable('disable').resizable('disable');
+                        if (ui.draggable.data('uiDraggable')) {
+                            ui.draggable.draggable('disable');
+                        }
+                        if (ui.draggable.data('uiResizable')) {
+                            ui.draggable.resizable('disable');
+                        }
                     }
                     ui.draggable.show();
 
@@ -769,31 +839,38 @@ var TimeScheduler = {
                     stop: function (event, ui) {
                         var item, start, end;
                         var period, periodEnd, minuteDiff, section;
+                        var $this;
+
+                        $this = $(this);
 
                         period = TimeScheduler.GetSelectedPeriod();
                         periodEnd = TimeScheduler.GetEndOfPeriod(TimeScheduler.Options.Start, period);
                         minuteDiff = Math.abs(TimeScheduler.Options.Start.diff(periodEnd, 'minutes'));
 
-                        item = $(this).data('item');
+                        item = $this.data('item');
 
                         if (ui.position.left !== ui.originalPosition.left) {
                             // Left handle moved
 
-                            start = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * ($(this).position().left / TimeScheduler.SectionWrap.width()));
+                            start = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * ($this.position().left / TimeScheduler.SectionWrap.width()));
                             end = item.end;
                         }
                         else {
                             // Right handle moved
 
                             start = item.start;
-                            end = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * (($(this).position().left + $(this).width()) / TimeScheduler.SectionWrap.width()));
+                            end = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * (($this.position().left + $this.width()) / TimeScheduler.SectionWrap.width()));
                         }
 
                         if (TimeScheduler.Options.DisableOnMove) {
-                            $(this)
-                                .resizable('disable')
-                                .draggable('disable')
-                                .find('.time-sch-item-event').show();
+                            if ($this.data('uiDraggable')) {
+                                $this.draggable('disable');
+                            }
+                            if ($this.data('uiResizable')) {
+                                $this.resizable('disable');
+                            }
+
+                            $this.find('.time-sch-item-event').show();
                         }
 
                         if (TimeScheduler.Options.Events.ItemMovementEnd) {

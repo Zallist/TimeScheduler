@@ -17,7 +17,8 @@ var Calendar = {
             TimeframeHeaders: [
                 'Do MMM',
                 'HH'
-            ]
+            ],
+            Classes: 'period-3day'
         },
         {
             Name: '1 week',
@@ -27,16 +28,19 @@ var Calendar = {
             TimeframeHeaders: [
                 'MMM',
                 'Do'
-            ]
+            ],
+            Classes: 'period-1week'
         },
         {
             Name: '1 month',
             Label: '1 month',
-            TimeframePeriod: (60 * 24 * 7),
+            TimeframePeriod: (60 * 24 * 1),
             TimeframeOverall: (60 * 24 * 28),
             TimeframeHeaders: [
-                'Do MMM'
-            ]
+                'MMM',
+                'Do'
+            ],
+            Classes: 'period-1month'
         }
     ],
 

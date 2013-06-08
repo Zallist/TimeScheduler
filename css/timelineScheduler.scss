@@ -122,6 +122,8 @@
 	height: 1em;
 	}
 .time-sch-item-content {
+	overflow: hidden;
+	white-space: nowrap;
 	position: relative;
 	z-index: 1;
 	}

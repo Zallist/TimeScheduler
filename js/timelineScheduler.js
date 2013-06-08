@@ -192,9 +192,61 @@ var TimeScheduler = {
     CachedSectionResult: null,
     CachedScheduleResult: null,
 
+    SetupPrototypes: function () {
+        moment.fn.tsAdd = function (input, val) {
+            var dur;
+            // switch args to support add('s', 1) and add(1, 's')
+            if (typeof input === 'string') {
+                dur = moment.duration(+val, input);
+            } else {
+                dur = moment.duration(input, val);
+            }
+            this.tsAddOrSubtractDurationFromMoment(this, dur, 1);
+            return this;
+        }
+
+        moment.fn.tsSubtract = function (input, val) {
+            var dur;
+            // switch args to support subtract('s', 1) and subtract(1, 's')
+            if (typeof input === 'string') {
+                dur = moment.duration(+val, input);
+            } else {
+                dur = moment.duration(input, val);
+            }
+            this.tsAddOrSubtractDurationFromMoment(this, dur, -1);
+            return this;
+        }
+
+        // Replace the AddOrSubtract function so that zoning is not taken into account at all
+        moment.fn.tsAddOrSubtractDurationFromMoment = function (mom, duration, isAdding) {
+            var ms = duration._milliseconds,
+                d = duration._days,
+                M = duration._months,
+                currentDate;
+
+            if (ms) {
+                mom.milliseconds(mom.milliseconds() + ms * isAdding);
+                //mom._d.setTime(+mom + ms * isAdding);
+            }
+            if (d) {
+                mom.date(mom.date() + d * isAdding);
+            }
+            if (M) {
+                currentDate = mom.date();
+                mom.date(1)
+                    .month(mom.month() + M * isAdding)
+                    .date(Math.min(currentDate, mom.daysInMonth()));
+            }
+        }
+    },
+
     /* Initializes the Timeline Scheduler with the given opts. If omitted, defaults are used. */
     /* This should be used to recreate the scheduler with new defaults or refill items */
     Init: function (overrideCache) {
+        TimeScheduler.SetupPrototypes();
+
+        TimeScheduler.Options.Start = moment(TimeScheduler.Options.Start);
+
         TimeScheduler.Options.Element.find('.ui-draggable').draggable('destroy');
         TimeScheduler.Options.Element.empty();
 
@@ -233,7 +285,7 @@ var TimeScheduler = {
     },
 
     GetEndOfPeriod: function (start, period) {
-        return moment(start).add('minutes', period.TimeframeOverall);
+        return moment(start).tsAdd('minutes', period.TimeframeOverall);
     },
 
     CreateCalendar: function () {
@@ -286,7 +338,7 @@ var TimeScheduler = {
 
             for (var i = 0; i < splits; i++) {
                 thisTime = moment(TimeScheduler.Options.Start)
-                    .add('minutes', (i * period.TimeframePeriod))
+                    .tsAdd('minutes', (i * period.TimeframePeriod))
                     .format(header);
 
                 if (prevDate !== thisTime) {
@@ -583,13 +635,13 @@ var TimeScheduler = {
 
                         item = $(event.target).data('item');
 
-                        start = moment(TimeScheduler.Options.Start).add('minutes', minuteDiff * (ui.helper.position().left / TimeScheduler.SectionWrap.width()));
-                        end = moment(start).add('minutes', Math.abs(item.start.diff(item.end, 'minutes')));
+                        start = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * (ui.helper.position().left / TimeScheduler.SectionWrap.width()));
+                        end = moment(start).tsAdd('minutes', Math.abs(item.start.diff(item.end, 'minutes')));
 
                         // If the start is before the start of our calendar, add the offset
                         if (item.start < TimeScheduler.Options.Start) {
-                            start.add('minutes', item.start.diff(TimeScheduler.Options.Start, 'minutes'));
-                            end.add('minutes', item.start.diff(TimeScheduler.Options.Start, 'minutes'));
+                            start.tsAdd('minutes', item.start.diff(TimeScheduler.Options.Start, 'minutes'));
+                            end.tsAdd('minutes', item.start.diff(TimeScheduler.Options.Start, 'minutes'));
                         }
 
                         TimeScheduler.Options.Events.ItemMovement.call(this, item, start, end);
@@ -632,13 +684,13 @@ var TimeScheduler = {
                     item = ui.draggable.data('item');
                     sectionID = $(this).data('section').id;
 
-                    start = moment(TimeScheduler.Options.Start).add('minutes', minuteDiff * (ui.helper.position().left / $(this).width()));
-                    end = moment(start).add('minutes', Math.abs(item.start.diff(item.end, 'minutes')));
+                    start = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * (ui.helper.position().left / $(this).width()));
+                    end = moment(start).tsAdd('minutes', Math.abs(item.start.diff(item.end, 'minutes')));
 
                     // If the start is before the start of our calendar, add the offset
                     if (item.start < TimeScheduler.Options.Start) {
-                        start.add('minutes', item.start.diff(TimeScheduler.Options.Start, 'minutes'));
-                        end.add('minutes', item.start.diff(TimeScheduler.Options.Start, 'minutes'));
+                        start.tsAdd('minutes', item.start.diff(TimeScheduler.Options.Start, 'minutes'));
+                        end.tsAdd('minutes', item.start.diff(TimeScheduler.Options.Start, 'minutes'));
                     }
 
                     // Append original to this section and reposition it while we wait
@@ -693,14 +745,14 @@ var TimeScheduler = {
                             if (ui.position.left !== ui.originalPosition.left) {
                                 // Left handle moved
 
-                                start = moment(TimeScheduler.Options.Start).add('minutes', minuteDiff * ($(this).position().left / TimeScheduler.SectionWrap.width()));
+                                start = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * ($(this).position().left / TimeScheduler.SectionWrap.width()));
                                 end = item.end;
                             }
                             else {
                                 // Right handle moved
 
                                 start = item.start;
-                                end = moment(TimeScheduler.Options.Start).add('minutes', minuteDiff * (($(this).position().left + $(this).width()) / TimeScheduler.SectionWrap.width()));
+                                end = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * (($(this).position().left + $(this).width()) / TimeScheduler.SectionWrap.width()));
                             }
 
                             TimeScheduler.Options.Events.ItemMovement.call(this, item, start, end);
@@ -727,14 +779,14 @@ var TimeScheduler = {
                         if (ui.position.left !== ui.originalPosition.left) {
                             // Left handle moved
 
-                            start = moment(TimeScheduler.Options.Start).add('minutes', minuteDiff * ($(this).position().left / TimeScheduler.SectionWrap.width()));
+                            start = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * ($(this).position().left / TimeScheduler.SectionWrap.width()));
                             end = item.end;
                         }
                         else {
                             // Right handle moved
 
                             start = item.start;
-                            end = moment(TimeScheduler.Options.Start).add('minutes', minuteDiff * (($(this).position().left + $(this).width()) / TimeScheduler.SectionWrap.width()));
+                            end = moment(TimeScheduler.Options.Start).tsAdd('minutes', minuteDiff * (($(this).position().left + $(this).width()) / TimeScheduler.SectionWrap.width()));
                         }
 
                         if (TimeScheduler.Options.DisableOnMove) {
@@ -834,7 +886,8 @@ var TimeScheduler = {
         end = TimeScheduler.GetEndOfPeriod(TimeScheduler.Options.Start, selectedPeriod);
 
         // Header needs a title
-        title.text(TimeScheduler.Options.Start.format(TimeScheduler.Options.HeaderFormat) + ' - ' + end.format(TimeScheduler.Options.HeaderFormat));
+        // We take away 1 minute 
+        title.text(TimeScheduler.Options.Start.format(TimeScheduler.Options.HeaderFormat) + ' - ' + end.tsAdd('minutes', -1).format(TimeScheduler.Options.HeaderFormat));
 
         for (var i = 0; i < TimeScheduler.Options.Periods.length; i++) {
             period = TimeScheduler.Options.Periods[i];
@@ -928,10 +981,10 @@ var TimeScheduler = {
             TimeScheduler.Options.Start = moment().startOf('day');
         }
         else if ($(this).is('.time-sch-time-button-prev')) {
-            TimeScheduler.Options.Start.add('minutes', period.TimeframeOverall * -1);
+            TimeScheduler.Options.Start.tsAdd('minutes', period.TimeframeOverall * -1);
         }
         else if ($(this).is('.time-sch-time-button-next')) {
-            TimeScheduler.Options.Start.add('minutes', period.TimeframeOverall);
+            TimeScheduler.Options.Start.tsAdd('minutes', period.TimeframeOverall);
         }
 
         TimeScheduler.Init();

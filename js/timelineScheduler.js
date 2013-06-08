@@ -324,12 +324,23 @@ var TimeScheduler = {
                         nextIndex = prevIndex + 1;
                     }
 
+                    if (prevIndex === columnCount) {
+                        td.addClass('time-sch-header-' + trCount + '-date-start');
+                    }
+                    if (nextIndex - 1 === columnCount) {
+                        td.addClass('time-sch-header-' + trCount + '-date-end');
+                    }
+
                     if (prevIndex <= columnCount && columnCount < nextIndex) {
                         complete = true;
                         isEven = tdCount % 2 === 0;
 
                         td.addClass('time-sch-header-' + trCount + '-date-column-' + tdCount)
                             .addClass('time-sch-header-' + trCount + '-date-' + (isEven ? 'even' : 'odd'));
+
+                        if (foundTD.hasClass('time-sch-header-' + trCount + '-current-time')) {
+                            td.addClass('time-sch-header-' + trCount + '-current-time');
+                        }
                     }
                 }
             }
@@ -337,10 +348,12 @@ var TimeScheduler = {
     },
 
     CreateCalendar: function () {
-        var tr, td, thisTime, header;
+        var tr, td, header;
         var minuteDiff, splits, period, end;
-        var prevDate = null, colspan = 0;
+        var thisTime, prevDate, fThisTime, fPrevDate, colspan;
         var currentTimeIndex;
+
+        colspan = 0;
 
         period = TimeScheduler.GetSelectedPeriod();
         end = TimeScheduler.GetEndOfPeriod(TimeScheduler.Options.Start, period);
@@ -374,6 +387,8 @@ var TimeScheduler = {
 
         for (var headerCount = 0; headerCount < period.TimeframeHeaders.length; headerCount++) {
             prevDate = null;
+            fPrevDate = null;
+
             isEven = true;
             colspan = 0;
             currentTimeIndex = 0;
@@ -390,27 +405,35 @@ var TimeScheduler = {
 
             for (var i = 0; i < splits; i++) {
                 thisTime = moment(TimeScheduler.Options.Start)
-                    .tsAdd('minutes', (i * period.TimeframePeriod))
-                    .format(header);
+                    .tsAdd('minutes', (i * period.TimeframePeriod));
 
-                if (prevDate !== thisTime) {
+                fThisTime = thisTime.format(header);
+
+                if (fPrevDate !== fThisTime) {
                     // If there is no prevDate, it's the Section Header
                     if (prevDate) {
                         td.attr('colspan', colspan);
                         colspan = 0;
+
+                        if (moment() >= prevDate && moment() < thisTime) {
+                            td.addClass('time-sch-header-' + headerCount + '-current-time');
+                        }
                     }
 
                     prevDate = thisTime;
+                    fPrevDate = fThisTime;
 
                     td = $(document.createElement('td'))
                         .data('header-row', headerCount)
                         .data('column-count', i)
                         .data('column-is-even', isEven)
                         .addClass('time-sch-date time-sch-date-header')
-                        .append(thisTime)
+                        .append(fThisTime)
                         .appendTo(tr);
                     
-                    td.addClass('time-sch-header-' + headerCount + '-date-column-' + currentTimeIndex)
+                    td  .addClass('time-sch-header-' + headerCount + '-date-start')
+                        .addClass('time-sch-header-' + headerCount + '-date-end')
+                        .addClass('time-sch-header-' + headerCount + '-date-column-' + currentTimeIndex)
                         .addClass('time-sch-header-' + headerCount + '-date-' + ((currentTimeIndex % 2 === 0) ? 'even' : 'odd'));
 
                     for (var prevHeader = 0; prevHeader < headerCount; prevHeader++) {

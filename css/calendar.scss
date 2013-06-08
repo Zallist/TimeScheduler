@@ -85,12 +85,31 @@ body {
 	display: none;
 }
 
-.period-3day .time-sch-header-0-date-even {
-	background-color: #F0F0F0;
+.period-3day {
+	.time-sch-header-0-date-even {
+		background-color: #F0F0F0;
+		}
 	}
-.period-1week .time-sch-header-0-date-even {
-	background-color: #F0F0F0;
+.period-1week {
+	.time-sch-header-0-date-even {
+		background-color: #F0F0F0;
+		}
 	}
-.period-1month .time-sch-header-1-date-even {
-	background-color: #F0F0F0;
+.period-1month {
+	.time-sch-header-1-date-even {
+		background-color: #F0F0F0;
+		}
+	}
+	
+.time-sch-wrapper {
+	.time-sch-header-1-current-time {
+		background-color: #999999;
+		border-color: #888888;
+		}
+	.time-sch-header-0-date-start {
+		border-left-color: #444444;
+		}
+	.time-sch-header-0-date-end {
+		border-right-color: #444444;
+		}
 	}

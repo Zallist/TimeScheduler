@@ -48,6 +48,9 @@
 .time-sch-time-button-today {
   margin-right: .5em; }
 
+.time-sch-content-wrap {
+  position: relative; }
+
 .time-sch-wrapper th, .time-sch-wrapper td {
   border-width: 1px;
   border-style: solid;
@@ -56,25 +59,25 @@
   border-left-color: #C1C1C1;
   border-right-color: #C1C1C1; }
 .time-sch-wrapper .time-sch-section-header {
-  border: none; }
-
-.time-sch-section-header {
-  width: 200px;
-  text-align: left; }
-
-.time-sch-date-header {
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-bottom-color: transparent; }
+.time-sch-wrapper .time-sch-date-header {
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; }
+.time-sch-wrapper .time-sch-section {
+  width: 200px; }
 
-.time-sch-section {
+.time-sch-section-content {
   vertical-align: middle;
   text-align: center;
   overflow: hidden; }
 
 .time-sch-section-wrapper {
   position: absolute;
+  top: 0;
   right: 0;
   bottom: 0;
   z-index: 1; }

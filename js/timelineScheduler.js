@@ -175,14 +175,15 @@ var TimeScheduler = {
     },
 
     Wrapper: null,
-    HeaderWrap: null,
 
+    HeaderWrap: null,
     TableWrap: null,
 
-    HeaderTable: null,
-
+    ContentHeaderWrap: null,
     ContentWrap: null,
-    GridTable: null,
+
+    TableHeader: null,
+    TableContent: null,
     SectionWrap: null,
 
     Table: null,
@@ -197,11 +198,18 @@ var TimeScheduler = {
         TimeScheduler.Options.Element.find('.ui-draggable').draggable('destroy');
         TimeScheduler.Options.Element.empty();
 
-        TimeScheduler.Wrapper = $('<div class="time-sch-wrapper"></div>').appendTo(TimeScheduler.Options.Element);
-        TimeScheduler.HeaderWrap = $('<div class="time-sch-header-wrapper time-sch-clearfix"></div>').appendTo(TimeScheduler.Wrapper);
-        TimeScheduler.TableWrap = $('<div class="time-sch-table-wrapper"></div>').appendTo(TimeScheduler.Wrapper);
-        TimeScheduler.SectionWrap = $('<div class="time-sch-section-wrapper"></div>').appendTo(TimeScheduler.TableWrap);
+        TimeScheduler.Wrapper = $(document.createElement('div'))
+            .addClass('time-sch-wrapper')
+            .appendTo(TimeScheduler.Options.Element);
 
+        TimeScheduler.HeaderWrap = $(document.createElement('div'))
+            .addClass('time-sch-header-wrapper time-sch-clearfix')
+            .appendTo(TimeScheduler.Wrapper);
+
+        TimeScheduler.TableWrap = $(document.createElement('div'))
+            .addClass('time-sch-table-wrapper')
+            .appendTo(TimeScheduler.Wrapper);
+        
         TimeScheduler.CreateCalendar();
         TimeScheduler.FillSections(overrideCache);
     },
@@ -229,7 +237,7 @@ var TimeScheduler = {
     },
 
     CreateCalendar: function () {
-        var thead, tbody, tr, td, thisTime, header;
+        var tr, td, thisTime, header;
         var minuteDiff, splits, period, end;
         var prevDate = null, colspan = 0;
 
@@ -239,9 +247,25 @@ var TimeScheduler = {
         minuteDiff = Math.abs(TimeScheduler.Options.Start.diff(end, 'minutes'));
         splits = (minuteDiff / period.TimeframePeriod);
 
-        TimeScheduler.Table = $('<table class="time-sch-table"></table>');
-        thead = $('<thead></thead>');
-        tbody = $('<tbody></tbody>');
+        TimeScheduler.ContentHeaderWrap = $(document.createElement('div'))
+            .addClass('time-sch-content-header-wrap')
+            .appendTo(TimeScheduler.TableWrap);
+
+        TimeScheduler.ContentWrap = $(document.createElement('div'))
+            .addClass('time-sch-content-wrap')
+            .appendTo(TimeScheduler.TableWrap);
+
+        TimeScheduler.TableHeader = $(document.createElement('table'))
+            .addClass('time-sch-table time-sch-table-header')
+            .appendTo(TimeScheduler.ContentHeaderWrap);
+
+        TimeScheduler.TableContent = $(document.createElement('table'))
+            .addClass('time-sch-table time-sch-table-content')
+            .appendTo(TimeScheduler.ContentWrap);
+
+        TimeScheduler.SectionWrap = $(document.createElement('div'))
+            .addClass('time-sch-section-wrapper')
+            .appendTo(TimeScheduler.ContentWrap);
 
         if (period.Classes) {
             TimeScheduler.TableWrap.toggleClass(period.Classes, true);
@@ -252,11 +276,12 @@ var TimeScheduler = {
             colspan = 0;
             header = period.TimeframeHeaders[headerCount];
 
-            tr = $('<tr class="time-sch-times"></tr>')
-                .addClass('time-sch-times-header-' + headerCount)
-                .appendTo(thead);
+            tr = $(document.createElement('tr'))
+                .addClass('time-sch-times time-sch-times-header-' + headerCount)
+                .appendTo(TimeScheduler.TableHeader);
 
-            td = $('<td class="time-sch-section-header"></td>')
+            td = $(document.createElement('td'))
+                .addClass('time-sch-section time-sch-section-header')
                 .appendTo(tr);
 
             for (var i = 0; i < splits; i++) {
@@ -273,7 +298,8 @@ var TimeScheduler = {
 
                     prevDate = thisTime;
 
-                    td = $('<td class="time-sch-date-header"></td>')
+                    td = $(document.createElement('td'))
+                        .addClass('time-sch-date time-sch-date-header')
                         .append(thisTime)
                         .appendTo(tr);
                 }
@@ -284,9 +310,6 @@ var TimeScheduler = {
             td.attr('colspan', colspan);
         }
 
-        TimeScheduler.Table.append(thead, tbody);
-        TimeScheduler.TableWrap.append(TimeScheduler.Table);
-
         TimeScheduler.FillHeader();
     },
 
@@ -294,7 +317,7 @@ var TimeScheduler = {
         var timeCount, tr, td, sectionContainer, headers, i;
 
         timeCount = 1;
-        headers = $.makeArray(TimeScheduler.Table.find('thead tr'));
+        headers = $.makeArray(TimeScheduler.TableHeader.find('tr'));
 
         for (i = 0; i < headers.length; i++) {
             if (timeCount < $(headers[i]).find('.time-sch-date-header').length) {
@@ -303,36 +326,39 @@ var TimeScheduler = {
         }
 
         for (i = 0; i < sections.length; i++) {
-            tr = $('<tr class="time-sch-section-row"></tr>')
-                .css('height', TimeScheduler.Options.MinRowHeight);
+            tr = $(document.createElement('tr'))
+                .addClass('time-sch-section-row')
+                .addClass(i % 2 === 0 ? 'time-sch-section-even' : 'time-sch-section-odd')
+                .css('height', TimeScheduler.Options.MinRowHeight)
+                .appendTo(TimeScheduler.TableContent);
 
-            tr.addClass(i % 2 === 0 ? 'time-sch-section-even' : 'time-sch-section-odd');
-
-            td = $('<td class="time-sch-section"></td>')
-                .text(sections[i].name)
-                .data('section', sections[i])
-                .appendTo(tr);
-
-            for (time = 0; time < timeCount; time++) {
-                td = $('<td class="time-sch-date"></td>').appendTo(tr);
-            }
-
-            sectionContainer = $('<div class="time-sch-section-container"></div>')
+            sectionContainer = $(document.createElement('div'))
+                .addClass('time-sch-section-container')
                 .css('height', TimeScheduler.Options.MinRowHeight)
                 .data('section', sections[i])
                 .appendTo(TimeScheduler.SectionWrap);
+
+            td = $(document.createElement('td'))
+                .addClass('time-sch-section time-sch-section-content')
+                .data('section', sections[i])
+                .append(sections[i].name)
+                .appendTo(tr);
+
+            for (time = 0; time < timeCount; time++) {
+                td = $(document.createElement('td'))
+                    .addClass('time-sch-date time-sch-date-content')
+                    .appendTo(tr);
+            }
 
             TimeScheduler.Sections[sections[i].id] = {
                 row: tr,
                 container: sectionContainer
             };
-
-            TimeScheduler.Table.find('tbody').append(tr);
         }
 
         TimeScheduler.SectionWrap.css({
-            top: TimeScheduler.Table.find('thead').height(),
-            left: $('.time-sch-section').outerWidth()
+            /*top: TimeScheduler.Table.find('thead').height(),
+            */left: TimeScheduler.Options.Element.find('.time-sch-section').outerWidth()
         });
 
         if (TimeScheduler.Options.ShowCurrentTime) {
@@ -354,11 +380,12 @@ var TimeScheduler = {
         minuteDiff = Math.abs(TimeScheduler.Options.Start.diff(end, 'minutes'));
         currentDiff = Math.abs(TimeScheduler.Options.Start.diff(currentTime, 'minutes'));
 
-        currentTimeElem = $('.time-sch-current-time');
+        currentTimeElem = TimeScheduler.Options.Element.find('.time-sch-current-time');
         currentTimeElem.remove();
 
         if (currentTime >= TimeScheduler.Options.Start && currentTime <= end) {
-            currentTimeElem = $('<div class="time-sch-current-time"></div>')
+            currentTimeElem = $(document.createElement('div'))
+                .addClass('time-sch-current-time')
                 .css('left', ((currentDiff / minuteDiff) * 100) + '%')
                 .attr('title', currentTime.format(TimeScheduler.Options.LowerFormat))
                 .appendTo(TimeScheduler.SectionWrap);
@@ -401,34 +428,23 @@ var TimeScheduler = {
                     calcLeft = (itemDiff / minuteDiff) * 100;
                     calcWidth = (itemSelfDiff / minuteDiff) * 100;
 
-                    itemElem = $('<div class="time-sch-item"></div>');
+                    itemElem = $(document.createElement('div'))
+                        .addClass('time-sch-item ' + (item.classes ? item.classes : ''))
+                        .css({
+                            top: calcTop,
+                            left: calcLeft + '%',
+                            width: calcWidth + '%'
+                        })
+                        .appendTo(section.container);
 
-                    itemElem.css({
-                        top: calcTop,
-                        left: calcLeft + '%',
-                        width: calcWidth + '%'
-                    });
-
-                    itemIcon = $('<img alt="Icon" class="time-sch-item-icon" />');
-                    itemContent = $('<div class="time-sch-item-content"></div>');
+                    itemContent = $(document.createElement('div'))
+                        .addClass('time-sch-item-content')
+                        .appendTo(itemElem);
 
                     if (item.name) {
-                        itemName = $('<div class="time-sch-item-name"></div>');
-                        itemName.html(item.name);
-                        itemContent.append(itemName);
-                    }
-                    
-                    if (item.icon) {
-                        itemIcon.attr({
-                            src: item.icon
-                        });
-                        itemElem.append(itemIcon);
-                    }
-
-                    itemElem.append(itemContent);
-
-                    if (item.classes) {
-                        itemElem.addClass(item.classes);
+                        $(document.createElement('div'))
+                            .append(item.name)
+                            .appendTo(itemContent);
                     }
 
                     if (item.events) {
@@ -437,24 +453,24 @@ var TimeScheduler = {
 
                             eventDiff = (event.at.diff(foundStart, 'minutes') / itemSelfDiff) * 100;
                             
-                            eventElem = $('<div class="time-sch-item-event"></div>')
-                                .attr('title', event.at.format(TimeScheduler.Options.LowerFormat) + ' - ' + event.label)
+                            $(document.createElement('div'))
+                                .addClass('time-sch-item-event ' + (event.classes ? event.classes : ''))
                                 .css('left', eventDiff + '%')
-                                .data('event', event);
-
-                            if (event.classes) {
-                                eventElem.addClass(event.classes);
-                            }
-
-                            itemElem.append(eventElem);
+                                .attr('title', event.at.format(TimeScheduler.Options.LowerFormat) + ' - ' + event.label)
+                                .data('event', event)
+                                .appendTo(itemElem);
                         }
                     }
 
                     if (item.start >= TimeScheduler.Options.Start) {
-                        itemElem.append('<div class="time-sch-item-start"></div>');
+                        $(document.createElement('div'))
+                            .addClass('time-sch-item-start')
+                            .appendTo(itemElem);
                     }
                     if (item.end <= end) {
-                        itemElem.append('<div class="time-sch-item-end"></div>');
+                        $(document.createElement('div'))
+                            .addClass('time-sch-item-end')
+                            .appendTo(itemElem);
                     }
 
                     item.Element = itemElem;
@@ -476,8 +492,6 @@ var TimeScheduler = {
                     itemElem.data('item', item);
 
                     TimeScheduler.SetupItemEvents(itemElem);
-
-                    section.container.append(itemElem);
                 }
             }
         }
@@ -553,7 +567,7 @@ var TimeScheduler = {
             itemElem.draggable({
                 helper: 'clone',
                 zIndex: 1,
-                appendTo: '.time-sch-section-wrapper',
+                appendTo: TimeScheduler.SectionWrap,
                 distance: 5,
                 snap: '.time-sch-section-container',
                 snapMode: 'inner',
@@ -744,8 +758,6 @@ var TimeScheduler = {
 
         if (TimeScheduler.Options.Events.ItemEventClicked) {
             itemElem.find('.time-sch-item-event').click(function (event) {
-                event.preventDefault();
-
                 var itemElem = $(this).closest('.time-sch-item');
 
                 event.preventDefault();
@@ -805,9 +817,14 @@ var TimeScheduler = {
         var durationString, title, periodContainer, timeContainer, periodButton, timeButton;
         var selectedPeriod, end, period;
         
-        periodContainer = $('<div class="time-sch-period-container"></div>');
-        timeContainer = $('<div class="time-sch-time-container"></div>');
-        title = $('<div class="time-sch-title"></div>');
+        periodContainer = $(document.createElement('div'))
+            .addClass('time-sch-period-container');
+
+        timeContainer = $(document.createElement('div'))
+            .addClass('time-sch-time-container');
+
+        title = $(document.createElement('div'))
+            .addClass('time-sch-title');
 
         TimeScheduler.HeaderWrap
             .empty()
@@ -822,49 +839,66 @@ var TimeScheduler = {
         for (var i = 0; i < TimeScheduler.Options.Periods.length; i++) {
             period = TimeScheduler.Options.Periods[i];
 
-            periodButton = $('<a class="time-sch-period-button time-sch-button" href="#"></a>')
-                .text(period.Label)
+            $(document.createElement('a'))
+                .addClass('time-sch-period-button time-sch-button')
                 .addClass(period.Name === selectedPeriod.Name ? 'time-sch-selected-button' : '')
+                .attr('href', '#')
+                .append(period.Label)
                 .data('period', period)
                 .click(TimeScheduler.Period_Clicked)
                 .appendTo(periodContainer);
         }
 
         if (TimeScheduler.Options.ShowGoto) {
-            timeButton = $('<a class="time-sch-time-button time-sch-time-button-goto time-sch-button" href="#"></a>')
+            $(document.createElement('a'))
+                .addClass('time-sch-time-button time-sch-time-button-goto time-sch-button')
+                .attr({
+                    href: '#',
+                    title: TimeScheduler.Options.Text.GotoButtonTitle
+                })
                 .append(TimeScheduler.Options.Text.GotoButton)
-                .attr('title', TimeScheduler.Options.Text.GotoButtonTitle)
                 .click(TimeScheduler.GotoTimeShift_Clicked)
                 .appendTo(timeContainer);
         }
 
         if (TimeScheduler.Options.ShowToday) {
-            timeButton = $('<a class="time-sch-time-button time-sch-time-button-today time-sch-button" href="#"></a>')
+            $(document.createElement('a'))
+                .addClass('time-sch-time-button time-sch-time-button-today time-sch-button')
+                .attr({
+                    href: '#',
+                    title: TimeScheduler.Options.Text.TodayButtonTitle
+                })
                 .append(TimeScheduler.Options.Text.TodayButton)
-                .attr('title', TimeScheduler.Options.Text.TodayButtonTitle)
                 .click(TimeScheduler.TimeShift_Clicked)
                 .appendTo(timeContainer);
         }
 
-        timeButton = $('<a class="time-sch-time-button time-sch-time-button-prev time-sch-button" href="#"></a>')
+        $(document.createElement('a'))
+            .addClass('time-sch-time-button time-sch-time-button-prev time-sch-button')
+            .attr({
+                href: '#',
+                title: TimeScheduler.Options.Text.PrevButtonTitle
+            })
             .append(TimeScheduler.Options.Text.PrevButton)
-            .attr('title', TimeScheduler.Options.Text.PrevButtonTitle)
             .click(TimeScheduler.TimeShift_Clicked)
             .appendTo(timeContainer);
 
-        timeButton = $('<a class="time-sch-time-button time-sch-time-button-next time-sch-button" href="#"></a>')
+        $(document.createElement('a'))
+            .addClass('time-sch-time-button time-sch-time-button-next time-sch-button')
+            .attr({
+                href: '#',
+                title: TimeScheduler.Options.Text.NextButtonTitle
+            })
             .append(TimeScheduler.Options.Text.NextButton)
-            .attr('title', TimeScheduler.Options.Text.NextButtonTitle)
             .click(TimeScheduler.TimeShift_Clicked)
             .appendTo(timeContainer);
-
-        TimeScheduler.HeaderWrap.append(periodContainer, timeContainer, title);
     },
 
     GotoTimeShift_Clicked: function (event) {
         event.preventDefault();
 
-        var dt = $('<input type="text" />')
+        $(document.createElement('input'))
+            .attr('type', 'text')
             .css({
                 position: 'absolute',
                 left: 0,
@@ -880,10 +914,9 @@ var TimeScheduler = {
                     TimeScheduler.Init();
                 },
                 defaultDate: TimeScheduler.Options.Start.toDate()
-            });
-
-        dt.datepicker('show');
-        dt.hide();
+            })
+            .datepicker('show')
+            .hide();
     },
     TimeShift_Clicked: function (event) {
         var period;

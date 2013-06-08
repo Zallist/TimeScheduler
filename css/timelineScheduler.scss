@@ -56,6 +56,10 @@
 	margin-right: .5em;
 	}
 
+.time-sch-content-wrap {
+	position: relative;
+	}
+
 //== Table defaults
 .time-sch-wrapper {
 	th, td {
@@ -69,24 +73,25 @@
 		}
 		
 	.time-sch-section-header {
-		border: none;
+		border-top-color: transparent;
+		border-left-color: transparent;
+		border-bottom-color: transparent;
+		}
+
+	.time-sch-date-header {
+		text-align: left;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		}
+
+	.time-sch-section {
+		width: 200px;
 		}
 	}
-
-//== Header row
-.time-sch-section-header {
-	width: 200px;
-	text-align: left;
-	}
-.time-sch-date-header {
-	text-align: left;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	}
-
+	
 //== Section rows
-.time-sch-section {
+.time-sch-section-content {
 	vertical-align: middle;
 	text-align: center;
 	overflow: hidden;
@@ -95,6 +100,7 @@
 //== Sections
 .time-sch-section-wrapper {
 	position: absolute;
+	top: 0;
 	right: 0;
 	bottom: 0;
 	z-index: 1;

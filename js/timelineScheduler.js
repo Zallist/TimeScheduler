@@ -908,12 +908,12 @@ var TimeScheduler = {
             }
         }
 
-        if (TimeScheduler.Options.Events.ItemEventClicked) {
+        if (TimeScheduler.Options.Events.ItemEventClick) {
             itemElem.find('.time-sch-item-event').click(function (event) {
                 var itemElem = $(this).closest('.time-sch-item');
 
                 event.preventDefault();
-                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+                TimeScheduler.Options.Events.ItemEventClick.call(this, $(this).data('event'), itemElem.data('item'));
             });
         }
         if (TimeScheduler.Options.Events.ItemEventMouseEnter) {
@@ -921,7 +921,7 @@ var TimeScheduler = {
                 var itemElem = $(this).closest('.time-sch-item');
 
                 event.preventDefault();
-                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+                TimeScheduler.Options.Events.ItemEventMouseEnter.call(this, $(this).data('event'), itemElem.data('item'));
             });
         }
         if (TimeScheduler.Options.Events.ItemEventMouseLeave) {
@@ -929,7 +929,7 @@ var TimeScheduler = {
                 var itemElem = $(this).closest('.time-sch-item');
 
                 event.preventDefault();
-                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+                TimeScheduler.Options.Events.ItemEventMouseLeave.call(this, $(this).data('event'), itemElem.data('item'));
             });
         }
     },

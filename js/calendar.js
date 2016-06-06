@@ -99,15 +99,15 @@ var Calendar = {
     Sections: [
         {
             id: 1,
-            name: '校招 1'
+            name: 'Section 1'
         },
         {
             id: 2,
-            name: '校招 2'
+            name: 'Section 2'
         },
         {
             id: 3,
-            name: '校招 3'
+            name: 'Section 3'
         }
     ],
 
@@ -129,13 +129,7 @@ var Calendar = {
         TimeScheduler.Options.Events.ItemMovement = Calendar.Item_Movement;
         TimeScheduler.Options.Events.ItemMovementStart = Calendar.Item_MovementStart;
         TimeScheduler.Options.Events.ItemMovementEnd = Calendar.Item_MovementEnd;
-		
-		TimeScheduler.Options.Events.ItemMouseEnter=Calendar.Item_MouseEnter;
-		TimeScheduler.Options.Events.ItemMouseLeave=Calendar.Item_MouseLeave;
-		TimeScheduler.Options.Events.ItemEventMouseEnter=Calendar.Item_EventMouseEnter;
-		TimeScheduler.Options.Events.ItemEventClick=Calendar.Item_EventClick;
-		
-		
+
         TimeScheduler.Options.Text.NextButton = '&nbsp;';
         TimeScheduler.Options.Text.PrevButton = '&nbsp;';
 
@@ -221,34 +215,7 @@ var Calendar = {
 
     Item_MovementEnd: function () {
         $('.realtime-info').hide();
-    },
-	Item_MouseEnter:function(item){
-		var html;
-
-        html =  '<div>';
-		html += '   <div>';
-        html += '       Name: ' + item.name;
-        html += '   </div>';
-        html += '   <div>';
-        html += '       Start: ' + item.start.format('Do MMM YYYY HH:mm');
-        html += '   </div>';
-        html += '   <div>';
-        html += '       End: ' + item.end.format('Do MMM YYYY HH:mm');
-        html += '   </div>';
-        html += '</div>';
-
-        $('.realtime-info').empty().append(html);
-		$('.realtime-info').show();
-	},
-	Item_MouseLeave:function(item){
-		$('.realtime-info').hide();
-	},
-	Item_EventMouseEnter:function(eventData, itemData){
-		console.log("yes");
-	},
-	Item_EventClick:function(eventData, itemData){
-		console.log("click");
-	}
+    }
 };
 
 $(document).ready(Calendar.Init);

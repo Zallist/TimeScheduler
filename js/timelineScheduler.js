@@ -554,7 +554,8 @@ var TimeScheduler = {
                 if (!inSection[item.sectionID]) {
                     inSection[item.sectionID] = [];
                 }
-
+				//console.log(item);
+				//console.log("createItems: end"+end+",start:"+TimeScheduler.Options.Start);
                 if (item.start <= end && item.end >= TimeScheduler.Options.Start) {
                     foundPos = null;
 
@@ -598,19 +599,22 @@ var TimeScheduler = {
                                 .css('left', eventDiff + '%')
                                 .attr('title', event.at.format(TimeScheduler.Options.LowerFormat) + ' - ' + event.label)
                                 .data('event', event)
-                                .appendTo(itemElem);
+								.appendTo(itemContent);
+                                //.appendTo(itemElem);
                         }
                     }
 
                     if (item.start >= TimeScheduler.Options.Start) {
                         $(document.createElement('div'))
                             .addClass('time-sch-item-start')
-                            .appendTo(itemElem);
+							.appendTo(itemContent);
+                            //.appendTo(itemElem);
                     }
                     if (item.end <= end) {
                         $(document.createElement('div'))
                             .addClass('time-sch-item-end')
-                            .appendTo(itemElem);
+							.appendTo(itemContent);
+                            //.appendTo(itemElem);
                     }
 
                     item.Element = itemElem;
@@ -908,12 +912,12 @@ var TimeScheduler = {
             }
         }
 
-        if (TimeScheduler.Options.Events.ItemEventClicked) {
+        if (TimeScheduler.Options.Events.ItemEventClick) {
             itemElem.find('.time-sch-item-event').click(function (event) {
                 var itemElem = $(this).closest('.time-sch-item');
 
                 event.preventDefault();
-                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+                TimeScheduler.Options.Events.ItemEventClick.call(this, $(this).data('event'), itemElem.data('item'));
             });
         }
         if (TimeScheduler.Options.Events.ItemEventMouseEnter) {
@@ -921,7 +925,7 @@ var TimeScheduler = {
                 var itemElem = $(this).closest('.time-sch-item');
 
                 event.preventDefault();
-                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+                TimeScheduler.Options.Events.ItemEventMouseEnter.call(this, $(this).data('event'), itemElem.data('item'));
             });
         }
         if (TimeScheduler.Options.Events.ItemEventMouseLeave) {
@@ -929,7 +933,7 @@ var TimeScheduler = {
                 var itemElem = $(this).closest('.time-sch-item');
 
                 event.preventDefault();
-                TimeScheduler.Options.Events.ItemEventClicked.call(this, $(this).data('event'), itemElem.data('item'));
+                TimeScheduler.Options.Events.ItemEventMouseLeave.call(this, $(this).data('event'), itemElem.data('item'));
             });
         }
     },

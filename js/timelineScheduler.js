@@ -26,6 +26,12 @@
 /// <reference path="jquery-ui-1.10.2.custom.min.js" />
 /// <reference path="moment.min.js" />
 
+;(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    global.TimeScheduler = factory()
+}(this, (function () { 'use strict';
+var isEven,time;
 var TimeScheduler = {
     Options: {
         /* The function to call to fill up Sections.
@@ -1106,3 +1112,7 @@ var TimeScheduler = {
         TimeScheduler.SelectPeriod($(this).data('period').Name);
     }
 };
+
+return TimeScheduler;
+
+})));

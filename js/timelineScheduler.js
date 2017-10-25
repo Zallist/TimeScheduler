@@ -26,6 +26,12 @@
 /// <reference path="jquery-ui-1.10.2.custom.min.js" />
 /// <reference path="moment.min.js" />
 
+;(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    global.TimeScheduler = factory()
+}(this, (function () { 'use strict';
+var isEven,time;
 var TimeScheduler = {
     Options: {
         /* The function to call to fill up Sections.
@@ -249,7 +255,11 @@ var TimeScheduler = {
 
         TimeScheduler.Options.Start = moment(TimeScheduler.Options.Start);
 
-        TimeScheduler.Options.Element.find('.ui-draggable').draggable('destroy');
+		// it only destroys draggable element if dragging is enabled
+		if(TimeScheduler.Options.AllowDragging){
+	        TimeScheduler.Options.Element.find('.ui-draggable').draggable('destroy');
+		}
+
         TimeScheduler.Options.Element.empty();
 
         TimeScheduler.Wrapper = $(document.createElement('div'))
@@ -1059,6 +1069,7 @@ var TimeScheduler = {
             })
             .appendTo($(this))
             .datepicker({
+				dateFormat: "yy-mm-dd",
                 onClose: function () {
                     $(this).remove();
                 },
@@ -1101,3 +1112,7 @@ var TimeScheduler = {
         TimeScheduler.SelectPeriod($(this).data('period').Name);
     }
 };
+
+return TimeScheduler;
+
+})));

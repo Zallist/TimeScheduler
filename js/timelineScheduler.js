@@ -1059,6 +1059,7 @@ var TimeScheduler = {
             })
             .appendTo($(this))
             .datepicker({
+				dateFormat: "yy-mm-dd",
                 onClose: function () {
                     $(this).remove();
                 },

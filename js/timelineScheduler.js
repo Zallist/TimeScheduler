@@ -249,7 +249,11 @@ var TimeScheduler = {
 
         TimeScheduler.Options.Start = moment(TimeScheduler.Options.Start);
 
-        TimeScheduler.Options.Element.find('.ui-draggable').draggable('destroy');
+		// it only destroys draggable element if dragging is enabled
+		if(TimeScheduler.Options.AllowDragging){
+	        TimeScheduler.Options.Element.find('.ui-draggable').draggable('destroy');
+		}
+
         TimeScheduler.Options.Element.empty();
 
         TimeScheduler.Wrapper = $(document.createElement('div'))

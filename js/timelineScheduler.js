@@ -1100,9 +1100,9 @@ var TimeScheduler = {
         else if ($(this).is('.time-sch-time-button-next')) {
             TimeScheduler.Options.Start.tsAdd('minutes', period.TimeframeOverall);
         }
-
-        TimeScheduler.Options.Events.TimeShiftClicked.call(this, TimeScheduler.Options.Start, period);
-
+	if ( TimeScheduler.Options.Events.TimeShiftClicked ) {
+        	TimeScheduler.Options.Events.TimeShiftClicked.call(this, TimeScheduler.Options.Start, period);
+	}
         TimeScheduler.Init();
     },
 

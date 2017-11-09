@@ -1,4 +1,4 @@
-﻿/*!  Copyright (c) 2013 Zallist
+/*!  Copyright (c) 2013 Zallist
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,12 @@
 /// <reference path="jquery-ui-1.10.2.custom.min.js" />
 /// <reference path="moment.min.js" />
 
+;(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    global.TimeScheduler = factory()
+}(this, (function () { 'use strict';
+var isEven,time;
 var TimeScheduler = {
     Options: {
         /* The function to call to fill up Sections.
@@ -160,7 +166,10 @@ var TimeScheduler = {
             ItemEventMouseEnter: null,
 
             // function (eventData, itemData)
-            ItemEventMouseLeave: null
+            ItemEventMouseLeave: null,
+
+            // function (item, start, period)
+            TimeShiftClicked: null
         },
 
         // Should dragging be enabled?
@@ -249,7 +258,11 @@ var TimeScheduler = {
 
         TimeScheduler.Options.Start = moment(TimeScheduler.Options.Start);
 
-        TimeScheduler.Options.Element.find('.ui-draggable').draggable('destroy');
+		// it only destroys draggable element if dragging is enabled
+		if(TimeScheduler.Options.AllowDragging){
+	        TimeScheduler.Options.Element.find('.ui-draggable').draggable('destroy');
+		}
+
         TimeScheduler.Options.Element.empty();
 
         TimeScheduler.Wrapper = $(document.createElement('div'))
@@ -1059,6 +1072,7 @@ var TimeScheduler = {
             })
             .appendTo($(this))
             .datepicker({
+				dateFormat: "yy-mm-dd",
                 onClose: function () {
                     $(this).remove();
                 },
@@ -1086,7 +1100,9 @@ var TimeScheduler = {
         else if ($(this).is('.time-sch-time-button-next')) {
             TimeScheduler.Options.Start.tsAdd('minutes', period.TimeframeOverall);
         }
-
+	if ( TimeScheduler.Options.Events.TimeShiftClicked ) {
+        	TimeScheduler.Options.Events.TimeShiftClicked.call(this, TimeScheduler.Options.Start, period);
+	}
         TimeScheduler.Init();
     },
 
@@ -1101,3 +1117,7 @@ var TimeScheduler = {
         TimeScheduler.SelectPeriod($(this).data('period').Name);
     }
 };
+
+return TimeScheduler;
+
+})));

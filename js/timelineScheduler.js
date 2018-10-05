@@ -22,8 +22,7 @@
 
 // Visual Studio references
 
-/// <reference path="jquery-1.9.1.min.js" />
-/// <reference path="jquery-ui-1.10.2.custom.min.js" />
+/// <reference path="jquery-ui-1.10.2.min.js" />
 /// <reference path="moment.min.js" />
 
 var TimeScheduler = {

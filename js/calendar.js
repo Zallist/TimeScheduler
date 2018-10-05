@@ -1,6 +1,5 @@
 ﻿// Visual Studio references
 
-/// <reference path="jquery-1.9.1.min.js" />
 /// <reference path="jquery-ui-1.10.2.min.js" />
 /// <reference path="moment.min.js" />
 /// <reference path="timelineScheduler.js" />
@@ -9,6 +8,17 @@ var today = moment().startOf('day');
 
 var Calendar = {
     Periods: [
+        {
+            Name: '1 day',
+            Label: '1 day',
+            TimeframePeriod: (60),
+            TimeframeOverall: (60 * 24 ),
+            TimeframeHeaders: [
+                'Do MMM',
+                'HH mm'
+            ],
+            Classes: 'period-1day'
+        },
         {
             Name: '3 days',
             Label: '3 days',
